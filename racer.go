@@ -94,7 +94,10 @@ func main() {
 	start_article := strings.Split(decodedStart, wikipediaURL)
 	end_article := strings.Split(decodedEnd, wikipediaURL)
 
-	path := initBidirectionalSearch(start_article[1], end_article[1])
+	start_article_normalize := strings.ReplaceAll(start_article[1], "_", " ")
+	end_article_normalize := strings.ReplaceAll(end_article[1], "_", " ")
+
+	path := initBidirectionalSearch(start_article_normalize, end_article_normalize)
 
 	fmt.Println("\n\n\nPath found: ")
 	for _, article := range path {
