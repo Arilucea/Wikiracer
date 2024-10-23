@@ -1,6 +1,6 @@
 # Wikiracer
 
-Find a path between two wikipedia articles.
+Find a path between two wikipedia articles by doing a bidirectional breadth-first search.
 
 # Usage
 

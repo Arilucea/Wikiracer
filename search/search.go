@@ -1,15 +1,10 @@
 package search
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-	"net/url"
 	"strings"
 	"sync"
 
-	gowiki "github.com/trietmn/go-wiki"
+	gowiki "github.com/Arilucea/go-wiki"
 )
 
 // Explore articles links by
@@ -60,64 +55,11 @@ func GetLinks(article string) ([]string, error) {
 	return links, nil
 }
 
-// JSON response
-type ApiResponse struct {
-	Continue struct {
-		Blcontinue string `json:"blcontinue"`
-	} `json:"continue"`
-	Query struct {
-		Backlinks []struct {
-			Title string `json:"title"`
-		} `json:"backlinks"`
-	} `json:"query"`
-}
-
-// Function to fetch backlinks with pagination
 func GetBacklinks(article string) ([]string, error) {
 	println("Getting backlinks for:", article)
-	var backlinks []string
-	apiURL := "https://en.wikipedia.org/w/api.php"
-	blcontinue := ""
-
-	for {
-		params := url.Values{}
-		params.Add("action", "query")
-		params.Add("format", "json")
-		params.Add("list", "backlinks")
-		params.Add("bltitle", article)
-		params.Add("bllimit", "500")
-
-		if blcontinue != "" {
-			params.Add("blcontinue", blcontinue)
-		}
-
-		// Make the request to the Wikipedia API
-		resp, err := http.Get(apiURL + "?" + params.Encode())
-		if err != nil {
-			return nil, fmt.Errorf("error fetching data: %v", err)
-		}
-		defer resp.Body.Close()
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, fmt.Errorf("error reading response body: %v", err)
-		}
-
-		var apiResp ApiResponse
-		err = json.Unmarshal(body, &apiResp)
-		if err != nil {
-			return nil, fmt.Errorf("error parsing JSON: %v", err)
-		}
-
-		for _, backlink := range apiResp.Query.Backlinks {
-			backlinks = append(backlinks, backlink.Title)
-		}
-
-		// Check if there's a continue token; if not, break out of the loop
-		blcontinue = apiResp.Continue.Blcontinue
-		if blcontinue == "" {
-			break
-		}
+	backlinks, err := gowiki.GetBacklinks(article)
+	if err != nil {
+		return nil, err
 	}
 
 	return backlinks, nil

@@ -2,7 +2,7 @@ module github.com/arilucea/wikiracer
 
 go 1.22.2
 
-require github.com/trietmn/go-wiki v1.0.3
+require github.com/Arilucea/go-wiki v1.0.0
 
 require (
 	github.com/anaskhan96/soup v1.2.5 // indirect
